@@ -22,6 +22,7 @@ import paddle
 import paddle.nn as nn
 import paddle.nn.functional as F
 from ppdet.modeling.ops import get_act_fn
+from ppdet.core.workspace import register
 
 from ..utils import compute_box_bias
 
@@ -46,12 +47,13 @@ class PredictorMLP(nn.Layer):
                  in_dim,
                  out_dim,
                  num_layers,
-                 mlp_dim,
-                 hidden_activation,
+                 mlp_dim=None,
+                 hidden_activation='gelu',
                  out_activation=None):
         super().__init__()
 
         layers = []
+        mlp_dim = in_dim if mlp_dim is None else mlp_dim
         for _ in range(num_layers - 1):
             layers.append(nn.Linear(in_dim, mlp_dim))
             in_dim = mlp_dim
@@ -138,7 +140,6 @@ class OWLViTHead(nn.Layer):
         self.class_head = class_head
         self.bbox_head = bbox_head
         self.box_bias = box_bias
-        self.matcher = matcher
         self.loss = loss
 
     def box_predictor(self, image_features, feature_map):

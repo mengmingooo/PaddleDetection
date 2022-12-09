@@ -21,6 +21,7 @@ from __future__ import print_function
 import gzip
 import html
 import os
+import functools
 from functools import lru_cache
 
 import ftfy

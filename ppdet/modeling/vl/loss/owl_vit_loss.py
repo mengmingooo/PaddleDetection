@@ -32,7 +32,7 @@ class OWLViTLoss(nn.Layer):
     __inject__ = ['HungarianMatcher']
 
     def __init__(self,
-                 num_classes,
+                 num_classes=80,
                  matcher='HungarianMatcher',
                  normalization='per_example',
                  loss_coeff=None,

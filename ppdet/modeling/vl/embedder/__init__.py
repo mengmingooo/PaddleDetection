@@ -21,6 +21,7 @@ import paddle.nn as nn
 import paddle.nn.functional as F
 
 from ppdet.core.workspace import register
+from .clip import *
 
 __all__ = ['ClipImageTextEmbedder']
 

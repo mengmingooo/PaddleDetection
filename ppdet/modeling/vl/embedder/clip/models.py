@@ -32,7 +32,7 @@ from ppdet.core.workspace import register
 
 from .layers import *
 
-__all__ = ['ModifiedResNet', 'VisionTransformer', 'TextEncoder']
+__all__ = ['ModifiedResNet', 'ViT', 'TextEncoder']
 
 
 @register
@@ -105,7 +105,7 @@ class ModifiedResNet(nn.Layer):
 
 
 @register
-class VisionTransformer(nn.Layer):
+class ViT(nn.Layer):
     def __init__(self,
                  input_resolution,
                  patch_size,
@@ -115,6 +115,7 @@ class VisionTransformer(nn.Layer):
                  output_dim=None,
                  stochastic_droplayer_rate=0.0):
         super().__init__()
+        self.width = width
         self.input_resolution = input_resolution
         self.output_dim = output_dim
         self.conv1 = nn.Conv2D(
@@ -122,7 +123,7 @@ class VisionTransformer(nn.Layer):
             out_channels=width,
             kernel_size=patch_size,
             stride=patch_size,
-            bias=False)
+            bias_attr=False)
         scale = width**-0.5
         self.class_embedding = self.create_parameter(
             shape=[width], attr=ParamAttr(initializer=Normal(std=scale)))
@@ -157,9 +158,14 @@ class VisionTransformer(nn.Layer):
 
 @register
 class TextEncoder(nn.Layer):
-    def __init__(self, context_length, vocab_size, transformer_width,
-                 transformer_heads, transformer_layers,
-                 stochastic_droplayer_rate):
+    def __init__(self,
+                 embed_dim,
+                 context_length,
+                 vocab_size,
+                 transformer_width,
+                 transformer_heads,
+                 transformer_layers,
+                 stochastic_droplayer_rate=0.0):
         super().__init__()
         self.context_length = context_length
 
@@ -178,8 +184,6 @@ class TextEncoder(nn.Layer):
         self.ln_final = LayerNorm(transformer_width)
         self.text_projection = nn.Linear(
             transformer_width, embed_dim, bias_attr=False)
-        self.logit_scale = self.create_parameter(
-            shape=[], attr=ParamAttr(initializer=Constant(np.log(1. / 0.07))))
 
     def build_attention_mask(self):
         # lazily create causal attention mask, with full attention between the vision tokens

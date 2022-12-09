@@ -12,6 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .models import ModifiedResNet, TextEncoder, VisionTransformer
+from .models import ModifiedResNet, TextEncoder, ViT
 from .layers import LayerNorm, QuickGELU, AttentionPool2D
 from .clip import CLIP

@@ -31,7 +31,7 @@ from ppdet.modeling.layers import MultiHeadAttention
 from ppdet.modeling.initializer import zeros_, normal_
 from ppdet.core.workspace import register
 
-from .models import ModifiedResNet, VisionTransformer, TextEncoder
+from .models import ModifiedResNet, ViT, TextEncoder
 
 
 @register

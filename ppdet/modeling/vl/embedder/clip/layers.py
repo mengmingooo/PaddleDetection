@@ -84,7 +84,7 @@ class Bottleneck(nn.Layer):
         return out
 
 
-class AttentionPool2D(nn.Module):
+class AttentionPool2D(nn.Layer):
     def __init__(self, spacial_dim, embed_dim, num_heads, output_dim):
         super().__init__()
         # TODO: need check whether it is consistent with torch or not
@@ -151,10 +151,9 @@ class ResidualAttentionBlock(nn.Layer):
 
         self.attn = MultiHeadAttention(d_model, n_head)
         self.ln_1 = LayerNorm(d_model)
-        self.mlp = nn.Sequential(
-            OrderedDict([("c_fc", nn.Linear(d_model, d_model * 4)), (
-                "gelu", QuickGELU()), ("c_proj", nn.Linear(d_model * 4, d_model)
-                                       )]))
+        self.mlp = nn.Sequential(("c_fc", nn.Linear(d_model, d_model * 4)),
+                                 ("gelu", QuickGELU()),
+                                 ("c_proj", nn.Linear(d_model * 4, d_model)))
         self.ln_2 = LayerNorm(d_model)
         self.attn_mask = attn_mask
         self.droplayer_p = droplayer_p
@@ -192,6 +191,7 @@ class Transformer(nn.Layer):
         super().__init__()
         self.width = width
         self.layers = layers
+        self.stochastic_droplayer_rate = stochastic_droplayer_rate
         blocks = []
         for i in range(self.layers):
             droplayer_p = (i / max(self.layers - 1,
