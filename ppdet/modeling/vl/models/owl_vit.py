@@ -27,7 +27,7 @@ from ..tokenizer import tokenize
 
 
 @register
-class OWLViT(BaseArch):
+class OWLViT(nn.Layer):
     __category__ = 'architecture'
 
     def __init__(self, embedder, head):
